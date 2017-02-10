@@ -17,7 +17,7 @@ email=immo@blecher.co.za
 about=This plugin uses ogr2ogr to import spatial data into MySQL and MariaDB
 
 tracker=github.com
-repository=github.com
+repository=https://github.com/immoblecher/qgis-plugin-mysqlimport
 # End of mandatory metadata
 
 # Recommended items:
