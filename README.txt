@@ -1,33 +1,19 @@
-Plugin Builder Results
+This plugin was built with the Plugin Builder in QGIS
 
-Your plugin mysqlimport was created in:
-    /home/immo/Development/qgis/plugins/MySQLimport/mysqlimport
+Once installed there will be a button with a seal (MariaDB icon) and a menu
+item under Database to access the one-form plugin. Just enter the details
+of the server, username, password and the database, which you should create
+using any MySQL management tool beforehand as the plugin does not create the
+database yet (I am woking on it).
 
-Your QGIS plugin directory is located at:
-    /home/immo/.qgis2/python/plugins
+Then choose the file to import and press OK. Depending on the size of the file
+it can take a while, but no progress is shown, only the WAIT cursor. (I am
+working on it). Shapefiles and OSM files work well but, really any file that
+ogr2ogr can read can be imported. So make sure ogr2ogr is installed with
+QGIS.
 
-What's Next:
+ENJOY!
 
-  * Copy the entire directory containing your new plugin to the QGIS plugin
-    directory
+Git location: https://github.com/immoblecher/qgis-plugin-mysqlimport
 
-  * Compile the resources file using pyrcc4
-
-  * Run the tests (``make test``)
-
-  * Test the plugin by enabling it in the QGIS plugin manager
-
-  * Customize it by editing the implementation file: ``mysql_import.py``
-
-  * Create your own custom icon, replacing the default icon.png
-
-  * Modify your user interface by opening mysqlimport.ui in Qt Designer
-
-  * You can use the Makefile to compile your Ui and resource files when
-    you make changes. This requires GNU make (gmake)
-
-For more information, see the PyQGIS Developer Cookbook at:
-http://www.qgis.org/pyqgis-cookbook/index.html
-
-(C) 2011-2014 GeoApt LLC - geoapt.com
 Git revision : $Format:%H$
