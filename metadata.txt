@@ -10,7 +10,7 @@
 name=MySQL Importer
 qgisMinimumVersion=2.0
 description=Import spatial data into MySQL/MariaDB
-version=0.2
+version=0.3
 author=Immo Blecher
 email=immo@blecher.co.za
 
