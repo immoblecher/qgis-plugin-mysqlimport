@@ -28,6 +28,8 @@ import resources
 from mysql_import_dialog import mysqlimportDialog
 import os.path, subprocess, MySQLdb
 from qgis.gui import QgsMessageBar
+from qgis.core import QgsCoordinateReferenceSystem
+from qgis.gui import QgsProjectionSelectionWidget
 
 class mysqlimport:
     """QGIS Plugin Implementation."""
@@ -168,6 +170,8 @@ class mysqlimport:
             text=self.tr(u'Import data into MySQL/MariaDB'),
             callback=self.run,
             parent=self.iface.mainWindow())
+        self.dlg.toolButton.clicked.connect(self.selectFile)
+        self.dlg.testButton.clicked.connect(self.testConnection)
 
 
     def unload(self):
@@ -180,34 +184,37 @@ class mysqlimport:
         # remove the toolbar
         del self.toolbar
 
+    # Define Openfile Dialog
+    def selectFile(self):
+      self.dlg.button_box.button(QDialogButtonBox.Ok).setEnabled(False)          
+      self.dlg.lineEditFile.setText(QFileDialog.getOpenFileName(self.dlg, 'Open file', '', "All files (*.*)"))
+      if self.dlg.lineEditFile.text() > '':
+        self.dlg.button_box.button(QDialogButtonBox.Ok).setEnabled(True)
+
+    # Define Test Connection button function
+    def testConnection(self):
+      host = self.dlg.lineEditHost.text()
+      user = self.dlg.lineEditUsername.text()
+      passwd = self.dlg.lineEditPassword.text()
+      port = self.dlg.lineEditPort.text()
+      db = self.dlg.lineEditDB.text()
+      try:
+        testdb = MySQLdb.connect(host, user, passwd, db)
+        testdb.close();
+        self.iface.messageBar().pushMessage("Information:", "Connection to database successful.")
+      except MySQLdb.Error:
+        self.iface.messageBar().pushMessage("Error:", "Could not connect to database with these parameters! Please check your settings and try again.", level=QgsMessageBar.CRITICAL)
 
     def run(self):
         """Run method that performs all the real work"""
-        # Define Openfile Dialog
-        def selectFile():
-          self.dlg.lineEditFile.setText(QFileDialog.getOpenFileName(self.dlg, 'Open file', '', "All files (*.*)"))
-        self.dlg.toolButton.clicked.connect(selectFile)
-        # Define Test Connection button function
-        def testConnection():
-          host = self.dlg.lineEditHost.text()
-          user = self.dlg.lineEditUsername.text()
-          passwd = self.dlg.lineEditPassword.text()
-          port = self.dlg.lineEditPort.text()
-          db = self.dlg.lineEditDB.text()
-          try:
-            testdb = MySQLdb.connect(host, user, passwd, db)
-            self.iface.messageBar().pushMessage("Information:", "Connection to database successful.")
-          except MySQLdb.Error:
-            self.iface.messageBar().pushMessage("Error:", "Could not connect to database with these parameters! Please check your settings and try again.", level=QgsMessageBar.CRITICAL)
-        self.dlg.testButton.clicked.connect(testConnection)
         # show the dialog
+        self.dlg.button_box.button(QDialogButtonBox.Ok).setEnabled(False)
+        self.dlg.mQgsProjectionSelectionWidget.setCrs(QgsCoordinateReferenceSystem('EPSG:4326'))
         self.dlg.show()
         # Run the dialog event loop
         result = self.dlg.exec_()
         # See if OK was pressed
         if result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
             cursor = QCursor()
             cursor.setShape(Qt.WaitCursor)
             QApplication.instance().setOverrideCursor(cursor)
@@ -217,12 +224,21 @@ class mysqlimport:
             port = self.dlg.lineEditPort.text()
             db = self.dlg.lineEditDB.text()
             loadfile = self.dlg.lineEditFile.text()
+            crs = QgsCoordinateReferenceSystem.authid(self.dlg.mQgsProjectionSelectionWidget.crs())
             os.chdir(os.path.dirname(os.path.abspath(loadfile)))
             fname = os.path.basename(loadfile) 
-            command = 'ogr2ogr -f "MySQL" MYSQL:"' + db + ',host=' + host + ',user=' + user + ',password=' + passwd + ',port=' + port + '" -a_srs "EPSG:4326" -lco engine=MYISAM "' + fname + '"'
-            subprocess.check_call(command, shell=True)
-            QApplication.instance().restoreOverrideCursor()
-            QMessageBox.information(self.iface.mainWindow(), "MySQL/MariaDB Import", "The file " + fname + " has been imported successfully.")
-
-
+            try:
+              testdb = MySQLdb.connect(host, user, passwd, db)
+              command = 'ogr2ogr -f "MySQL" MYSQL:"' + db + ',host=' + host + ',user=' + user + ',password=' + passwd + ',port=' + port + '" -a_srs "' + crs + '" -lco engine=MYISAM "' + fname + '"'
+              subprocess.check_call(command, shell=True)
+            except MySQLdb.Error:
+              QApplication.instance().restoreOverrideCursor()
+              self.iface.messageBar().pushMessage("Error:", "Could not connect to database with these parameters! Please check your settings and try again. Nothing has been imported.", level=QgsMessageBar.CRITICAL)
+            finally:
+              testdb.close()
+              self.dlg.lineEditFile.clear()
+              self.dlg.toolButton.clicked.disconnect()
+              self.dlg.testButton.clicked.disconnect()
+              QApplication.instance().restoreOverrideCursor()
+              QMessageBox.information(self.iface.mainWindow(), "MySQL/MariaDB Import", "The file " + fname + " has been imported successfully.")
 

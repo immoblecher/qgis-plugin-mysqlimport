@@ -1,0 +1,5 @@
+Vers. 0.2
+ 
+The OK button is initially disabled and will only be enabled if a file is selected for import.
+
+The database connection parameters will now also be checked (same as with the "Test Connection" button) before the import starts and an error shown if something is wrong.
