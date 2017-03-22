@@ -186,24 +186,24 @@ class mysqlimport:
 
     # Define Openfile Dialog
     def selectFile(self):
-      self.dlg.button_box.button(QDialogButtonBox.Ok).setEnabled(False)          
-      self.dlg.lineEditFile.setText(QFileDialog.getOpenFileName(self.dlg, 'Open file', '', "All files (*.*)"))
-      if self.dlg.lineEditFile.text() > '':
-        self.dlg.button_box.button(QDialogButtonBox.Ok).setEnabled(True)
+        self.dlg.button_box.button(QDialogButtonBox.Ok).setEnabled(False)          
+        self.dlg.lineEditFile.setText(QFileDialog.getOpenFileName(self.dlg, 'Open file', '', "All files (*.*)"))
+        if self.dlg.lineEditFile.text() > '':
+            self.dlg.button_box.button(QDialogButtonBox.Ok).setEnabled(True)
 
     # Define Test Connection button function
     def testConnection(self):
-      host = self.dlg.lineEditHost.text()
-      user = self.dlg.lineEditUsername.text()
-      passwd = self.dlg.lineEditPassword.text()
-      port = self.dlg.lineEditPort.text()
-      db = self.dlg.lineEditDB.text()
-      try:
-        testdb = MySQLdb.connect(host, user, passwd, db)
-        testdb.close();
-        self.iface.messageBar().pushMessage("Information:", "Connection to database successful.")
-      except MySQLdb.Error:
-        self.iface.messageBar().pushMessage("Error:", "Could not connect to database with these parameters! Please check your settings and try again.", level=QgsMessageBar.CRITICAL)
+        dbhost = self.dlg.lineEditHost.text()
+        dbuser = self.dlg.lineEditUsername.text()
+        dbpasswd = self.dlg.lineEditPassword.text()
+        dbport = int(self.dlg.lineEditPort.text())
+        dbschema = self.dlg.lineEditDB.text()
+        try:
+            testdb = MySQLdb.connect(host=dbhost, port=dbport, user=dbuser, passwd=dbpasswd, db=dbschema)
+            testdb.close();
+            self.iface.messageBar().pushMessage("Information:", "Connection to database successful.")
+        except MySQLdb.Error:
+            self.iface.messageBar().pushMessage("Error:", "Could not connect to database with these parameters! Please check your settings and try again.", level=QgsMessageBar.CRITICAL)
 
     def run(self):
         """Run method that performs all the real work"""
@@ -218,27 +218,25 @@ class mysqlimport:
             cursor = QCursor()
             cursor.setShape(Qt.WaitCursor)
             QApplication.instance().setOverrideCursor(cursor)
-            host = self.dlg.lineEditHost.text()
-            user = self.dlg.lineEditUsername.text()
-            passwd = self.dlg.lineEditPassword.text()
-            port = self.dlg.lineEditPort.text()
-            db = self.dlg.lineEditDB.text()
+            dbhost = self.dlg.lineEditHost.text()
+            dbuser = self.dlg.lineEditUsername.text()
+            dbpasswd = self.dlg.lineEditPassword.text()
+            dbport = int(self.dlg.lineEditPort.text())
+            dbschema = self.dlg.lineEditDB.text()
             loadfile = self.dlg.lineEditFile.text()
             crs = QgsCoordinateReferenceSystem.authid(self.dlg.mQgsProjectionSelectionWidget.crs())
             os.chdir(os.path.dirname(os.path.abspath(loadfile)))
             fname = os.path.basename(loadfile) 
             try:
-              testdb = MySQLdb.connect(host, user, passwd, db)
-              command = 'ogr2ogr -f "MySQL" MYSQL:"' + db + ',host=' + host + ',user=' + user + ',password=' + passwd + ',port=' + port + '" -a_srs "' + crs + '" -lco engine=MYISAM "' + fname + '"'
-              subprocess.check_call(command, shell=True)
+                thisdb = MySQLdb.connect(host=dbhost, port=dbport, user=dbuser, passwd=dbpasswd, db=dbschema)
+                command = 'ogr2ogr -f "MySQL" MYSQL:"' + dbschema + ',host=' + dbhost + ',user=' + dbuser + ',password=' + dbpasswd + ',port=' + str(dbport) + '" -a_srs "' + crs + '" -lco engine=MYISAM "' + fname + '"'
+                subprocess.check_call(command, shell=True)
             except MySQLdb.Error:
-              QApplication.instance().restoreOverrideCursor()
-              self.iface.messageBar().pushMessage("Error:", "Could not connect to database with these parameters! Please check your settings and try again. Nothing has been imported.", level=QgsMessageBar.CRITICAL)
+                QApplication.instance().restoreOverrideCursor()
+                self.iface.messageBar().pushMessage("Error:", "Could not connect to database with these parameters! Please check your settings and try again. Nothing has been imported.", level=QgsMessageBar.CRITICAL)
             finally:
-              testdb.close()
-              self.dlg.lineEditFile.clear()
-              self.dlg.toolButton.clicked.disconnect()
-              self.dlg.testButton.clicked.disconnect()
-              QApplication.instance().restoreOverrideCursor()
-              QMessageBox.information(self.iface.mainWindow(), "MySQL/MariaDB Import", "The file " + fname + " has been imported successfully.")
+                thisdb.close()
+                self.dlg.lineEditFile.clear()
+                QApplication.instance().restoreOverrideCursor()
+                QMessageBox.information(self.iface.mainWindow(), "MySQL/MariaDB Import", "The file " + fname + " has been imported successfully.")
 

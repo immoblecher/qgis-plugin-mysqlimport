@@ -1,11 +1,15 @@
-Vers. 0.3
+Vers. 0.4
+
+Fixed MySQL/MariaDB port setting, if it is not default 3306
+Fixed importing multiple files after each other, where "Select File" button was disabled
+
+---Vers. 0.3
 
 Fixed button functions when using the plugin several times within the same QGIS session to import one file after the other -> the button click funtions were moved to initGui
 
 Added: The user can now also choose the CRS (coordinate reference system) for the imported tables. Defaulted to ESPG:4326 previously
 
----
-Vers. 0.2
+---Vers. 0.2
  
 The OK button is initially disabled and will only be enabled if a file is selected for import.
 

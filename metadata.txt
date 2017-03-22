@@ -9,12 +9,12 @@
 [general]
 name=MySQL Importer
 qgisMinimumVersion=2.0
-description=Import spatial data into MySQL/MariaDB
-version=0.3
+description=Import spatial and table data into MySQL/MariaDB
+version=0.4
 author=Immo Blecher
 email=immo@blecher.co.za
 
-about=This plugin uses ogr2ogr to import spatial data into MySQL and MariaDB
+about=This plugin uses ogr2ogr to import spatial and table data into MySQL and MariaDB
 
 tracker=https://github.com/immoblecher/qgis-plugin-mysqlimport/issues
 repository=https://github.com/immoblecher/qgis-plugin-mysqlimport
@@ -32,7 +32,7 @@ homepage=http://www.blecher.co.za/index.php/projects/qgis-plugins
 category=Database
 icon=icon.png
 # experimental flag
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
