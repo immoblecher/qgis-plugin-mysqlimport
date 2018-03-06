@@ -8,13 +8,13 @@
 
 [general]
 name=MySQL Importer
-qgisMinimumVersion=2.0
+qgisMinimumVersion=3.0
 description=Import spatial and table data into MySQL/MariaDB
-version=0.4
+version=0.7.3
 author=Immo Blecher
 email=immo@blecher.co.za
 
-about=This plugin uses ogr2ogr to import spatial and table data into MySQL and MariaDB
+about=This plugin uses ogr2ogr to import spatial and table data into MySQL and MariaDB. Please make sure you have the MySQL Python extensions installed! (The plugin will give an error message if these are not installed). For Windows users the "Unofficial Windows Binaries for Python Extension Packages" can be downloaded at http://www.lfd.uci.edu/~gohlke/pythonlibs. These .whl compressed python extensions can then be extracted (you may need 7-Zip for that) to your <Python installation>\Lib\site-packages folder, or installed with the "pip" installer, to allow MySQL/Python interaction. For Linux and Mac installations please read your operating system instructions on how to install the MySQL/Python extensions.
 
 tracker=https://github.com/immoblecher/qgis-plugin-mysqlimport/issues
 repository=https://github.com/immoblecher/qgis-plugin-mysqlimport
@@ -26,7 +26,7 @@ repository=https://github.com/immoblecher/qgis-plugin-mysqlimport
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=
+tags=MySQL, MariaDB
 
 homepage=http://www.blecher.co.za/index.php/projects/qgis-plugins
 category=Database

@@ -1,4 +1,9 @@
-This plugin was built with the Plugin Builder in QGIS
+MySQL/MariaDB Importer Plugin
+
+This plugin was built with the Plugin Builder in QGIS.
+
+Please make sure the MySQL Python extensions are installed! Otherwise the plugin
+will give an error message about a missing "MySQLdb" module.
 
 Once installed there will be a button with a seal (MariaDB icon) and a menu
 item under Database to access the one-form plugin. Just enter the details

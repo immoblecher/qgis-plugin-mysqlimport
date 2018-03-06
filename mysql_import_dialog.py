@@ -23,13 +23,14 @@
 
 import os
 
-from PyQt4 import QtGui, uic
+from PyQt5 import uic
+from PyQt5 import QtWidgets
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'mysql_import_dialog_base.ui'))
 
 
-class mysqlimportDialog(QtGui.QDialog, FORM_CLASS):
+class mysqlimportDialog(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
         super(mysqlimportDialog, self).__init__(parent)

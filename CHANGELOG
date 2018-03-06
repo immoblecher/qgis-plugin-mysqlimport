@@ -1,11 +1,23 @@
-Vers. 0.4
+Ver 0.7.3
+Adapted to work with QGIS 3. Works with Python 3.x and QT5, which required quite a few minor changes.
+Download and installation of Python3/MySQLdb binaries required.
+
+---Ver. 0.6
+Changed dialog settings for loading the CRS Selector Widget under Windows and Mac
+Provide additional instructions for installing the MySQL/Python extensions
+
+---Vers. 0.5
+Fixed plugin loading under Windows and Mac
+Added message to make sure the MySQL/Python plugins are installed
+
+---Vers. 0.4
 
 Fixed MySQL/MariaDB port setting, if it is not default 3306
 Fixed importing multiple files after each other, where "Select File" button was disabled
 
 ---Vers. 0.3
 
-Fixed button functions when using the plugin several times within the same QGIS session to import one file after the other -> the button click funtions were moved to initGui
+Fixed button functions when using the plugin several times within the same QGIS session to import one file after the other -> the button click functions were moved to initGui
 
 Added: The user can now also choose the CRS (coordinate reference system) for the imported tables. Defaulted to ESPG:4326 previously
 

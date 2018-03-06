@@ -2,7 +2,7 @@
 """
 /***************************************************************************
  mysqlimport
-                                 A QGIS plugin
+                                 A QGIS 3.0 plugin
  Import data into MySQL/MariaDB
                               -------------------
         begin                : 2016-10-17
@@ -20,12 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
+from PyQt5.QtGui import QIcon, QCursor
+from PyQt5.QtWidgets import QAction, QDialogButtonBox, QFileDialog, QApplication, QMessageBox
+
 # Initialize Qt resources from file resources.py
-import resources
+from .resources import *
 # Import the code for the dialog
-from mysql_import_dialog import mysqlimportDialog
+from .mysql_import_dialog import mysqlimportDialog
 import os.path, subprocess, MySQLdb
 from qgis.gui import QgsMessageBar
 from qgis.core import QgsCoordinateReferenceSystem
@@ -47,7 +49,7 @@ class mysqlimport:
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
         # initialize locale
-        locale = QSettings().value('locale/userLocale')[0:2]
+        locale = QSettings().value('locale/userLocale')
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
@@ -186,8 +188,9 @@ class mysqlimport:
 
     # Define Openfile Dialog
     def selectFile(self):
-        self.dlg.button_box.button(QDialogButtonBox.Ok).setEnabled(False)          
-        self.dlg.lineEditFile.setText(QFileDialog.getOpenFileName(self.dlg, 'Open file', '', "All files (*.*)"))
+        self.dlg.button_box.button(QDialogButtonBox.Ok).setEnabled(False)
+        openfile = QFileDialog.getOpenFileName(None, "Open file", "", "All files (*.*)")           
+        self.dlg.lineEditFile.setText(openfile[0])
         if self.dlg.lineEditFile.text() > '':
             self.dlg.button_box.button(QDialogButtonBox.Ok).setEnabled(True)
 
@@ -203,7 +206,7 @@ class mysqlimport:
             testdb.close();
             self.iface.messageBar().pushMessage("Information:", "Connection to database successful.")
         except MySQLdb.Error:
-            self.iface.messageBar().pushMessage("Error:", "Could not connect to database with these parameters! Please check your settings and try again.", level=QgsMessageBar.CRITICAL)
+            self.iface.messageBar().pushMessage("Error:", "Could not connect to database with these parameters! Please check your settings and try again.", 2)
 
     def run(self):
         """Run method that performs all the real work"""
@@ -233,7 +236,7 @@ class mysqlimport:
                 subprocess.check_call(command, shell=True)
             except MySQLdb.Error:
                 QApplication.instance().restoreOverrideCursor()
-                self.iface.messageBar().pushMessage("Error:", "Could not connect to database with these parameters! Please check your settings and try again. Nothing has been imported.", level=QgsMessageBar.CRITICAL)
+                self.iface.messageBar().pushMessage("Error:", "Could not connect to database with these parameters! Please check your settings and try again. Nothing has been imported.", 2)
             finally:
                 thisdb.close()
                 self.dlg.lineEditFile.clear()
